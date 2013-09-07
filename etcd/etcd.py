@@ -26,12 +26,12 @@ MACHINES_URL = "{}/v1/machines"
 LEADER_URL = "{}/v1/leader"
 LIST_URL = "{}/v1/keys/{}/"
 
-EtcdSet = namedtuple("set", "index, newKey, prevValue, expiration")
-EtcdGet = namedtuple("get", "index, value")
-EtcdDelete = namedtuple("delete", "index, prevValue")
-EtcdWatch = namedtuple("watch", "action, value, key, index, newKey")
-EtcdTestAndSet = namedtuple("testandset", "index, key, prevValue, expiration")
-EtcdList = namedtuple("list", "key, index, value, dir")
+EtcdSet = namedtuple("EtcdSet", "index, newKey, prevValue, expiration")
+EtcdGet = namedtuple("EtcdSet", "index, value")
+EtcdDelete = namedtuple("EtcdSet", "index, prevValue")
+EtcdWatch = namedtuple("EtcdWatch", "action, value, key, index, newKey")
+EtcdTestAndSet = namedtuple("EtcdTestAndSet", "index, key, prevValue, expiration")
+EtcdList = namedtuple("EtcdList", "key, index, value, dir")
 
 
 class EtcdError(BaseException):
