@@ -30,7 +30,8 @@ EtcdSet = namedtuple("EtcdSet", "index, newKey, prevValue, expiration")
 EtcdGet = namedtuple("EtcdSet", "index, value")
 EtcdDelete = namedtuple("EtcdSet", "index, prevValue")
 EtcdWatch = namedtuple("EtcdWatch", "action, value, key, index, newKey")
-EtcdTestAndSet = namedtuple("EtcdTestAndSet", "index, key, prevValue, expiration")
+EtcdTestAndSet = namedtuple("EtcdTestAndSet",
+                            "index, key, prevValue, expiration")
 EtcdList = namedtuple("EtcdList", "key, index, value, dir")
 
 
@@ -42,7 +43,7 @@ class EtcdError(BaseException):
 class Etcd(object):
     """Talks to an etcd instance"""
     def __init__(self, host=DEFAULT_HOST, port=DEFAULT_PORT, ssl_cert=None,
-            ssl_key=None, follow_leader=True, autostart=True):
+                 ssl_key=None, follow_leader=True, autostart=True):
         """
         host: sets the hostname or IP address of the etcd server
         port: sets the port that the server is listening on
@@ -84,13 +85,14 @@ class Etcd(object):
             #self.base_url = self.machines()[0]
             leader_parts = urlparse(self.machines()[0])
             self.base_url = "{}://{}:{}".format(leader_parts.scheme,
-                    leader_parts.hostname, leader_parts.port)
+                                                leader_parts.hostname,
+                                                leader_parts.port)
         self.machines_cache = None
         self.machines()
 
     def set(self, key, value, ttl=None):
         """Sets key to value
-        
+
         key: key name to set
         value: value to set the key to
         ttl: optionally specify a time-to-live for this key
@@ -99,7 +101,7 @@ class Etcd(object):
         if ttl:
             data['ttl'] = ttl
         req = self.requests.post(KEYS_URL.format(self.base_url, key), data,
-                cert=self.ssl_conf)
+                                 cert=self.ssl_conf)
         res = req.json()
         if 'newKey' not in res:
             res['newKey'] = False
@@ -108,15 +110,16 @@ class Etcd(object):
         if 'expiration' not in res:
             res['expiration'] = None
         return EtcdSet(index=res['index'], newKey=res['newKey'],
-                prevValue=res['prevValue'], expiration=res['expiration'])
+                       prevValue=res['prevValue'],
+                       expiration=res['expiration'])
 
     def get(self, key):
         """Returns the value of the given key
-        
+
         key: the key to retrieve the value for
         """
         req = self.requests.get(KEYS_URL.format(self.base_url, key),
-                cert=self.ssl_conf)
+                                cert=self.ssl_conf)
         res = req.json()
         if 'errorCode' in res:
             raise EtcdError(res['errorCode'], res['message'])
@@ -124,14 +127,14 @@ class Etcd(object):
 
     def list(self, key):
         """list all the keys under a prefix path.
-        
+
         key: the key to retrieve the value for
         """
         req = self.requests.get(LIST_URL.format(self.base_url, key),
-                cert=self.ssl_conf)
+                                cert=self.ssl_conf)
         result = req.json()
         if 'errorCode' in result:
-            raise EtcdError(res['errorCode'], res['message'])
+            raise EtcdError(result['errorCode'], result['message'])
         for res in result:
             yield EtcdList(key=res['key'][1:], index=res['index'],
                            value=res.get('value'),
@@ -152,11 +155,11 @@ class Etcd(object):
 
     def delete(self, key):
         """Deletes the given key
-        
+
         key: the key to delete
         """
         req = self.requests.delete(KEYS_URL.format(self.base_url, key),
-                cert=self.ssl_conf)
+                                   cert=self.ssl_conf)
         res = req.json()
         if 'errorCode' in res:
             raise EtcdError(res['errorCode'], res['message'])
@@ -164,7 +167,7 @@ class Etcd(object):
 
     def watch(self, path, index=None, timeout=None):
         """Watches for changes to key
-        
+
         path: the directory to watch for changes
         index: optionally specify an index value to start at
         timeout: optionally specify a timeout to break out of watch
@@ -172,10 +175,12 @@ class Etcd(object):
         try:
             if index:
                 req = self.requests.post(WATCH_URL.format(self.base_url, path),
-                        {'index': index}, timeout=timeout, cert=self.ssl_conf)
+                                         {'index': index},
+                                         timeout=timeout,
+                                         cert=self.ssl_conf)
             else:
                 req = self.requests.get(WATCH_URL.format(self.base_url, path),
-                        timeout=timeout, cert=self.ssl_conf)
+                                        timeout=timeout, cert=self.ssl_conf)
         except requests.exceptions.Timeout:
             return None
         res = req.json()
@@ -188,11 +193,12 @@ class Etcd(object):
         if 'prevValue' not in res:
             res['prevValue'] = None
         return EtcdWatch(action=res['action'], value=res['value'],
-                key=res['key'][1:], newKey=res['newKey'], index=res['index'])
+                         key=res['key'][1:], newKey=res['newKey'],
+                         index=res['index'])
 
     def testandset(self, key, prev_value, value, ttl=None):
         """Atomic test and set
-        
+
         key: the key to test/set
         prev_value: must match the current value of the key
         value: the value to set the key to
@@ -202,7 +208,7 @@ class Etcd(object):
         if ttl:
             data['ttl'] = ttl
         req = self.requests.post(KEYS_URL.format(self.base_url, key), data,
-                cert=self.ssl_conf)
+                                 cert=self.ssl_conf)
         res = req.json()
         if 'expiration' not in res:
             res['expiration'] = None
@@ -211,17 +217,18 @@ class Etcd(object):
         if 'errorCode' in res:
             raise EtcdError(res['errorCode'], res['message'], res['cause'])
         return EtcdTestAndSet(index=res['index'], key=res['key'],
-                prevValue=res['prevValue'], expiration=res['expiration'])
+                              prevValue=res['prevValue'],
+                              expiration=res['expiration'])
 
     def machines(self):
         """Returns a list of machines in the cluster"""
         req = self.requests.get(MACHINES_URL.format(self.base_url),
-                cert=self.ssl_conf)
+                                cert=self.ssl_conf)
         self.machines_cache = req.text.split(', ')
         return self.machines_cache
 
     def leader(self):
         """Returns the leader"""
         req = self.requests.get(LEADER_URL.format(self.base_url),
-                cert=self.ssl_conf)
+                                cert=self.ssl_conf)
         return req.text
