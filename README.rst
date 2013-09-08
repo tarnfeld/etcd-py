@@ -52,6 +52,28 @@ Client certificates
     or
     >>> e = etcd.Etcd(ssl_cert="my.crt", ssl_key="my.key")
 
+List keys in a path:
+
+.. code-block:: pycon
+
+    >>> e.set("path/message1", 1)
+    EtcdSet(index=48, newKey=True, prevValue=None, expiration=None)
+    >>> e.set("path/message2", 2)
+    EtcdSet(index=49, newKey=True, prevValue=None, expiration=None)
+    >>> for key in e.list("path"):
+    ...     print key
+    EtcdList(key=u'path/message1', index=49, value=u'1', dir=False)
+    EtcdList(key=u'path/message2', index=49, value=u'2', dir=False)
+
+Get recursive:
+
+.. code-block:: pycon
+
+    >>> e.set("path/another/message", "three")
+    EtcdSet(index=50, newKey=True, prevValue=None, expiration=None)
+    >>> e.get_recursive("path")
+    {u'path/message2': u'2', u'path/message1': u'1', u'path/another/message': u'three'}
+
 TODO
 ====
 
