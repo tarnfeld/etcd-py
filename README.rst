@@ -65,4 +65,5 @@ TODO
 Author
 ======
 
-etcd-py is developed and maintained by Kris Foster (kris.foster@gmail.com)
+etcd-py is developed and maintained by Kris Foster (kris.foster@gmail.com). All contributors
+can be found here: https://github.com/transitorykris/etcd-py/graphs/contributors
