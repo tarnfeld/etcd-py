@@ -122,7 +122,7 @@ class Etcd(object):
                                 cert=self.ssl_conf)
         res = req.json()
         if isinstance(res, list):
-            raise ValueError('Error: Key "%s" is a directory, expecting leaf (use list() to get directory listing).' % key)
+            raise ValueError('Key "%s" is a directory, expecting leaf (use list() to get directory listing).' % key)
         if 'errorCode' in res:
             raise EtcdError(res['errorCode'], res['message'])
         return EtcdGet(index=res['index'], value=res['value'])
@@ -136,7 +136,7 @@ class Etcd(object):
                                 cert=self.ssl_conf)
         result = req.json()
         if isinstance(result, dict):
-            raise ValueError('Error: Key "%s" is a leaf, expecting directory (use get() to get leaf).' % key)
+            raise ValueError('Key "%s" is a leaf, expecting directory (use get() to get leaf).' % key)
         if 'errorCode' in result:
             raise EtcdError(result['errorCode'], result['message'])
         for res in result:
