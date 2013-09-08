@@ -69,7 +69,7 @@ class Etcd(object):
         self.base_url = "{}://{}:{}".format(schema, host, port)
         self.current_leader = None
         self.follow_leader = follow_leader
-        self._machines_cache = None
+        self.machines_cache = None
         if autostart:
             self.start()
 
