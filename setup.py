@@ -9,7 +9,7 @@ with open("LICENSE") as file:
     license = file.read()
 
 setup(name="etcd-py",
-      version="0.0.3",
+      version="0.0.5",
       description="Client for Etcd",
       long_description=long_description,
       author="Kris Foster",
