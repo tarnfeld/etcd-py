@@ -13,6 +13,9 @@ class TestEtcd(unittest.TestCase):
     def setUp(self):
         self.e = etcd.Etcd("10.0.1.110")
 
+    def tearDown(self):
+        self.e.close()
+
     def test_crud(self):
         test_key = uuid.uuid4().hex
         first_value = uuid.uuid4().hex
