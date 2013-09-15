@@ -1,3 +1,7 @@
+# vagrant
+Vagrantfile
+.vagrant
+
 *.py[cod]
 .pypirc
 *.swp
