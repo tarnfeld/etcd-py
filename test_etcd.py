@@ -29,5 +29,21 @@ class TestEtcd(unittest.TestCase):
         self.e.set(test_key, test_value, 1)
         self.assertEquals(self.e.watch(test_key).action, "DELETE")
 
+    def test_testandset(self):
+        pass
+
+    def test_get_recursive(self):
+        pass
+
+    def test_list(self):
+        pass
+
+    def test_machines(self):
+        pass
+
+    def test_leader(self):
+        pass
+
+
 if __name__ == '__main__':
     unittest.main()
