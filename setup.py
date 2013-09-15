@@ -3,15 +3,13 @@
 from distutils.core import setup
 
 
-with open("README.rst") as file:
-    long_description = file.read()
-with open("LICENSE") as file:
-    license = file.read()
+def read(filename):
+    return open(filename).read()
 
 setup(name="etcd-py",
       version="0.0.5",
       description="Client for Etcd",
-      long_description=long_description,
+      long_description=read("README.rst"),
       author="Kris Foster",
       author_email="kris.foster@gmail.com",
       maintainer="Kris Foster",
@@ -25,6 +23,6 @@ setup(name="etcd-py",
                    "Programming Language :: Python",
                    "Programming Language :: Python :: 2.6",
                    "Programming Language :: Python :: 2.7"),
-      license=license,
+      license=read("LICENSE"),
       packages=['etcd'],
       )
