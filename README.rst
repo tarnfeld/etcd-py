@@ -86,12 +86,7 @@ Get recursive:
 TODO
 ====
 
-* optionally start watching from last seen index
-* recover from a failed node by testing trying the next known node
-* error handling of http calls
-* optionally do not follow redirects
-* proper unit tests
-* a CI machine
+See issues reported on Github.
 
 Author
 ======
