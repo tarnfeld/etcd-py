@@ -1,3 +1,4 @@
 v0.0.1, 09/04/13 -- Initial release.
 v0.0.2, 09/05/13 -- Tidy things up for distribution.
 v0.0.3, 09/07/13 -- List and get_recursive added. Optionally connect to the leader.
+v0.0.5, 09/15/13 -- Fix broken setup.py
