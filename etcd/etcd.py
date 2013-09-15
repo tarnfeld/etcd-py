@@ -90,6 +90,11 @@ class Etcd(object):
         self.machines_cache = None
         self.machines()
 
+    def close(self):
+        """Closes the connection to etcd
+        """
+        self.requests.close()
+
     def set(self, key, value, ttl=None):
         """Sets key to value
 
