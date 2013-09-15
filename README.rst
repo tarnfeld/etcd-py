@@ -3,6 +3,13 @@ etcd-py
 
 A python client to etcd (https://github.com/coreos/etcd)
 
+Installation
+============
+
+.. code-block:: bash
+
+    # pip install requests
+
 Getting Started
 ===============
 
