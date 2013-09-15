@@ -11,7 +11,7 @@ import etcd
 
 class TestEtcd(unittest.TestCase):
     def setUp(self):
-        self.e = etcd.Etcd("10.0.1.110")
+        self.e = etcd.Etcd()
 
     def tearDown(self):
         self.e.close()
