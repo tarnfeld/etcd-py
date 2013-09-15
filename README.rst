@@ -6,9 +6,11 @@ A python client to etcd (https://github.com/coreos/etcd)
 Installation
 ============
 
+etcd-py has a single dependency: https://github.com/kennethreitz/requests
+
 .. code-block:: bash
 
-    # pip install requests
+    # pip install etcd-py requests
 
 Getting Started
 ===============
