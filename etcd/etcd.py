@@ -29,6 +29,7 @@ LIST_URL = "{}/v1/keys/{}/"
 EtcdSet = namedtuple("EtcdSet", "index, newKey, prevValue, expiration")
 EtcdGet = namedtuple("EtcdSet", "index, value")
 EtcdDelete = namedtuple("EtcdSet", "index, prevValue")
+EtcdDeleteDir = namedtuple("EtcdSet", "index")
 EtcdWatch = namedtuple("EtcdWatch", "action, value, key, index, newKey")
 EtcdTestAndSet = namedtuple("EtcdTestAndSet",
                             "index, key, prevValue, expiration")
@@ -174,7 +175,11 @@ get() to get leaf).' % key)
         res = req.json()
         if 'errorCode' in res:
             raise EtcdError(res['errorCode'], res['message'])
-        return EtcdDelete(index=res['index'], prevValue=res['prevValue'])
+        if 'prevValue' in res.keys():
+            return EtcdDelete(index=res['index'], prevValue=res['prevValue'])
+        else:
+            # if the path was a directory, there is no preValue
+            return EtcdDeleteDir(index=res['index'])
 
     def watch(self, path, index=None, timeout=None):
         """Watches for changes to key
