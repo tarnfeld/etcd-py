@@ -175,7 +175,7 @@ get() to get leaf).' % key)
         res = req.json()
         if 'errorCode' in res:
             raise EtcdError(res['errorCode'], res['message'])
-        if 'prevValue' in res.keys():
+        if 'prevValue' in res:
             return EtcdDelete(index=res['index'], prevValue=res['prevValue'])
         else:
             # if the path was a directory, there is no preValue
