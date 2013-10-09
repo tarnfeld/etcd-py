@@ -142,11 +142,11 @@ list() to get directory listing).' % key)
         req = self.requests.get(LIST_URL.format(self.base_url, key),
                                 cert=self.ssl_conf)
         result = req.json()
+        if 'errorCode' in result:
+            raise EtcdError(result['errorCode'], result['message'])
         if isinstance(result, dict):
             raise ValueError('Key "%s" is a leaf, expecting directory (use \
 get() to get leaf).' % key)
-        if 'errorCode' in result:
-            raise EtcdError(result['errorCode'], result['message'])
         for res in result:
             yield EtcdList(key=res['key'][1:], index=res['index'],
                            value=res.get('value'),
