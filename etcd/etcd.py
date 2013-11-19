@@ -33,7 +33,7 @@ EtcdSet = namedtuple("EtcdSet", "index, newKey, prevValue, expiration")
 EtcdGet = namedtuple("EtcdSet", "index, value")
 EtcdDelete = namedtuple("EtcdSet", "index, prevValue")
 EtcdDeleteDir = namedtuple("EtcdSet", "index")
-EtcdWatch = namedtuple("EtcdWatch", "action, value, key, index, newKey")
+EtcdWatch = namedtuple("EtcdWatch", "action, value, prevValue, key, index, newKey")
 EtcdTestAndSet = namedtuple("EtcdTestAndSet",
                             "index, key, prevValue, expiration")
 EtcdList = namedtuple("EtcdList", "key, index, value, dir")
@@ -213,7 +213,7 @@ get() to get leaf).' % key)
             res['prevValue'] = None
         return EtcdWatch(action=res['action'], value=res['value'],
                          key=res['key'][1:], newKey=res['newKey'],
-                         index=res['index'])
+                         index=res['index'], prevValue=res['prevValue'])
 
     def testandset(self, key, prev_value, value, ttl=None):
         """Atomic test and set
