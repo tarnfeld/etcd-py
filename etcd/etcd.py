@@ -30,7 +30,9 @@ LEADER_URL = "{}/v1/leader"
 LIST_URL = "{}/v1/keys/{}/"
 
 EtcdSet = namedtuple("EtcdSet", "index, newKey, prevValue, expiration")
+EtcdSetList = namedtuple("EtcdSetList", "index, head, values")
 EtcdGet = namedtuple("EtcdSet", "index, value")
+EtcdGetList = namedtuple("EtcdGetList", "head, index, values")
 EtcdDelete = namedtuple("EtcdSet", "index, prevValue")
 EtcdDeleteDir = namedtuple("EtcdSet", "index")
 EtcdWatch = namedtuple("EtcdWatch", "action, value, prevValue, key, index, newKey")
@@ -121,6 +123,52 @@ class Etcd(object):
         return EtcdSet(index=res['index'], newKey=res['newKey'],
                        prevValue=res['prevValue'],
                        expiration=res['expiration'])
+
+    def append(self, key, value):
+        """Append a value to the key
+
+        key: key name to append to
+        value: value to append to the list
+        """
+        return self.set(key, value)
+
+    def set_list(self, key, values):
+        """Set the value of a key to a linked list of values. These lists are
+        append only.
+
+        key: key name to append to
+        values: list of values to set onto the key
+        """
+        try:
+            self.delete(key)
+        except EtcdError, e:
+            code, message = e.args
+            if code != 100:
+                raise
+        for value in values:
+            head = self.append(key, value)
+        return EtcdSetList(head=head, index=head.index, values=values)
+
+    def get_list(self, key, nitems=None):
+        """Get all the values in a list.
+
+        key: key name to return
+        nitems: number of items to return from the head of the list
+        """
+
+        values = []
+        head = self.get(key)
+
+        # Get the head value
+        pointer = self.watch(key, head.index)
+        values.insert(0, pointer.value)
+
+        # Loop until we've traversed all the links
+        while not pointer.newKey and (not nitems or len(values) < nitems):
+            pointer = self.watch(key, pointer.index - 1)
+            values.insert(0, pointer.value)
+
+        return EtcdGetList(head=head, index=head.index, values=values)
 
     def get(self, key):
         """Returns the value of the given key
